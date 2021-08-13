@@ -23,7 +23,7 @@ export default function AuthLayout({ children }) {
     Keyboard.dismiss();
   };
   return (
-    <TouchableWithoutFeedback style={{ height: "100%" }} onPress={dismissKeyboard}>
+    <TouchableWithoutFeedback style={{ height: "100%" }} onPress={dismissKeyboard} disabled={Platform.OS === "web"}>
       <Container>
         <KeyboardAvoidingView
           style={{
