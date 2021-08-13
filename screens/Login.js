@@ -1,26 +1,63 @@
+import { gql, useMutation } from "@apollo/client";
 import React, { useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { logUserIn } from "../apollo";
 import AuthButton from "../components/auth/AuthButton";
 import AuthLayout from "../components/auth/AuthLayout";
 import { TextInput } from "../components/auth/AuthShared";
 
-export default function Login({ navigation }) {
-    const { register, handleSubmit, setValue } = useForm();
+const LOGIN_MUTATION = gql`
+  mutation login($username: String!, $password: String!){
+    login(username: $username, password: $password){
+      ok,
+      token,
+      error,
+    }
+  }
+`;
+
+export default function Login({ route: { params } }) {
+    const { register, handleSubmit, setValue, formState, watch } = useForm({
+        defaultValues: {
+            password: params?.password,
+            username: params?.username,
+        }
+    });
     const passwordRef = useRef();
+    const onCompleted = async (data) => {
+        const { login: { ok, token } } = data;
+        if (ok) {
+            await logUserIn(token);
+        }
+    };
+    const [loginMutation, { loading }] = useMutation(LOGIN_MUTATION, {
+        onCompleted,
+    });
     const onNext = (nextOne) => {
         nextOne?.current?.focus();
     };
     const onValid = (data) => {
-        console.log(data);
+        if (!loading) {
+            loginMutation({
+                variables: {
+                    ...data,
+                }
+            })
+        }
     };
     useEffect(() => {
-        register("username");
-        register("password");
+        register("username", {
+            required: true,
+        });
+        register("password", {
+            required: true,
+        });
     }, [register]);
 
     return (
         <AuthLayout>
             <TextInput
+                value={watch("username")}
                 placeholder="Username"
                 returnKeyType="next"
                 autoCapitalize="none"
@@ -30,6 +67,7 @@ export default function Login({ navigation }) {
             />
             <TextInput
                 ref={passwordRef}
+                value={watch("password")}
                 placeholder="Password"
                 secureTextEntry
                 returnKeyType="done"
@@ -40,7 +78,8 @@ export default function Login({ navigation }) {
             />
             <AuthButton
                 text="Log In"
-                disabled={false}
+                disabled={!watch("username") || !watch("password")}
+                loading={loading}
                 onPress={handleSubmit(onValid)}
             />
         </AuthLayout>
