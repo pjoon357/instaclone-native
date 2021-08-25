@@ -1,5 +1,5 @@
 import { createStackNavigator } from "@react-navigation/stack";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Feed from "../screens/Feed";
 import Me from "../screens/Me";
 import Notifications from "../screens/Notifications";
