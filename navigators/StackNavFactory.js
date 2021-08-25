@@ -48,9 +48,9 @@ export default function StackNavFactory({ screenName }) {
                 <Stack.Screen name={"SearchStack"} component={Search} />
             ) : null}
             {screenName === "Notifications" ? (
-                <Stack.Screen name={"Notifications"} component={Notifications} />
+                <Stack.Screen name={"NotificationsStack"} component={Notifications} />
             ) : null}
-            {screenName === "Me" ? <Stack.Screen name={"Me"} component={Me} /> : null}
+            {screenName === "Me" ? <Stack.Screen name={"MeStack"} component={Me} /> : null}
             <Stack.Screen name="Profile" component={Profile} />
             <Stack.Screen name="Photo" component={Photo} />
             <Stack.Screen name="Likes" component={Likes} />
