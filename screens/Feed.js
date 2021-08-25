@@ -7,8 +7,8 @@ import ScreenLayout from "../components/ScreenLayout";
 import Photo from "../components/Photo";
 
 const FEED_QUERY = gql`
-  query seeFeed {
-    seeFeed {
+  query seeFeed($offset: Int!) {
+    seeFeed(offset: $offset) {
       ...PhotoFragment
       user {
         username
@@ -26,29 +26,40 @@ const FEED_QUERY = gql`
   ${COMMENT_FRAGMENT}
 `;
 
-
 export default function Feed() {
-    const { data, loading, refetch } = useQuery(FEED_QUERY);
-    const renderPhoto = ({ item: photo }) => {
-        return <Photo {...photo} />;
-    };
-    const [refreshing, setRefreshing] = useState(false);
-    const refresh = async () => {
-        setRefreshing(true);
-        await refetch();
-        setRefreshing(false);
-    };
-    return (
-        <ScreenLayout loading={loading}>
-            <FlatList
-                refreshing={refreshing}
-                onRefresh={refresh}
-                style={{ width: "100%" }}
-                showsVerticalScrollIndicator={false}
-                data={data?.seeFeed}
-                keyExtractor={(photo) => "" + photo.id}
-                renderItem={renderPhoto}
-            />
-        </ScreenLayout>
-    );
+  const { data, loading, refetch, fetchMore } = useQuery(FEED_QUERY, {
+    variables: {
+      offset: 0,
+    },
+  });
+  const renderPhoto = ({ item: photo }) => {
+    return <Photo {...photo} />;
+  };
+  const [refreshing, setRefreshing] = useState(false);
+  const refresh = async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  };
+  return (
+    <ScreenLayout loading={loading}>
+      <FlatList
+        onEndReachedThreshold={0.05}
+        onEndReached={() =>
+          fetchMore({
+            variables: {
+              offset: data?.seeFeed?.length,
+            },
+          })
+        }
+        refreshing={refreshing}
+        onRefresh={refresh}
+        style={{ width: "100%" }}
+        showsVerticalScrollIndicator={false}
+        data={data?.seeFeed}
+        keyExtractor={(photo) => "" + photo.id}
+        renderItem={renderPhoto}
+      />
+    </ScreenLayout>
+  );
 }
