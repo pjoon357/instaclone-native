@@ -18,6 +18,7 @@ export default function TabsNav() {
             screenOptions={{
                 tabBarActiveTintColor: "white",
                 tabBarShowLabel: false,
+                headerShown: false,
                 tabBarStyle: {
                     borderTopColor: "rgba(255, 255, 255, 0.3)",
                     backgroundColor: "black",
