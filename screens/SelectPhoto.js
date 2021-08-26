@@ -5,6 +5,7 @@ import styled from "styled-components/native";
 import {
     FlatList,
     Image,
+    StatusBar,
     TouchableOpacity,
     useWindowDimensions,
 } from "react-native";
@@ -74,7 +75,7 @@ export default function SelectPhoto({ navigation }) {
             }
         >
             <HeaderRightText>Next</HeaderRightText>
-        </TouchableOpacity>
+        </TouchableOpacity >
     );
     useEffect(() => {
         getPermissions();
@@ -83,7 +84,7 @@ export default function SelectPhoto({ navigation }) {
         navigation.setOptions({
             headerRight: HeaderRight,
         });
-    }, []);
+    }, [chosenPhoto]);
     const numColumns = 4;
     const { width } = useWindowDimensions();
     const choosePhoto = (uri) => {
@@ -106,6 +107,7 @@ export default function SelectPhoto({ navigation }) {
     );
     return (
         <Container>
+            <StatusBar hidden={false} />
             <Top>
                 {chosenPhoto !== "" ? (
                     <Image
